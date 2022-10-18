@@ -17,6 +17,7 @@ import { useLogin } from "../context/LoginProvider";
 import ModalLogin from "../components/login/modalLogin";
 import ColorsPPS from "../utils/ColorsPPS";
 import LoadingScreen from "../utils/loadingScreen";
+import { authentication, db } from "../firebase-config";
 import { LinearGradient } from "expo-linear-gradient";
 
 const Login = (props) => {
@@ -31,106 +32,32 @@ const Login = (props) => {
 
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    //Traigo los datos 3 segundos despues
-    GuardarData();
+  useEffect(() => {}, []);
 
-    setTimeout(() => {
-      TraerData();
-    }, 3000);
-  }, []);
-
-  const GuardarData = async () => {
-    // guardo la informacion en el asyn mientras se carga la aplicacion
+  const login = (values, actions = false) => {
     try {
-      console.log("guardando user");
-      await AsyncStorage.setItem(
-        "Usuarios",
-        JSON.stringify([
-          { id: 5, correo: "invitado1@gmail.com", clave: "invitado1234" },
-          { id: 6, correo: "invitado2@gmail.com", clave: "invitado1234" },
-          { id: 7, correo: "invitado3@gmail.com", clave: "invitado1234" },
-          {
-            id: 1,
-            correo: "admin@admin.com",
-            clave: 1111,
-            perfil: "admin",
-            sexo: "femenino",
-          },
-          {
-            id: 2,
-            correo: "invitado@invitado.com",
-            clave: 2222,
-            perfil: "invitado",
-            sexo: "femenino",
-          },
-          {
-            id: 3,
-            correo: "usuario@usuario.com",
-            clave: 3333,
-            perfil: "usuario",
-            sexo: "masculino",
-          },
-          {
-            id: 4,
-            correo: "anonimo@anonimo.com",
-            clave: 4444,
-            perfil: "usuario",
-            sexo: "masculino",
-          },
-        ])
-        /*
-        
-        {"id":1, "correo":"admin@admin.com", "clave":1111, "perfil":"admin", "sexo":"femenino"}
-{"id":2, "correo":"invitado@invitado.com", "clave":2222, "perfil":"invitado", "sexo":"femenino"}
-{"id":3, "correo":"usuario@usuario.com", "clave":3333, "perfil":"usuario", "sexo":"masculino"}
-{"id":4, "correo":"anonimo@anonimo.com", "clave":4444, "perfil":"usuario", "sexo":"masculino"}*/
-      );
-    } catch (e) {
-      console.log("error guardando en el storage" + e);
-    }
-  };
-  const TraerData = async () => {
-    try {
-      const value = await AsyncStorage.getItem("Usuarios");
-      if (value !== null) {
-        setUsers(value);
-        console.log("ya cargaron los usuarios!!!");
-      }
-    } catch (e) {
-      console.log("error TRAYENDO en el storage" + e);
-    }
-  };
-  const validarCredencial = (values) => {
-    let retorno = false;
-    if (users.length > 0) {
-      JSON.parse(users).forEach((element) => {
-        if (
-          element.correo == values.email &&
-          element.clave == values.password
-        ) {
-          setProfile(element);
-          retorno = true;
-        }
-      });
-    } else {
-      console.log("LOS USUARIOS ESTAN VACIOS!!!");
-    }
-
-    return retorno;
-  };
-  const onPressLogIn = (values) => {
-    setLoading(true);
-    if (validarCredencial(values)) {
-      setEmail_(values.email);
-      setTimeout(() => {
-        setLoading(false);
-        setIsLogIn(true);
-        navigation.navigate("Home");
-      }, 2000);
-    } else {
+      setLoading(true);
+      authentication
+        .signInWithEmailAndPassword(values.email, values.password)
+        .then((_userCredentials) => {
+          actions && actions.resetForm();
+          setLoading(false);
+          setIsLogIn(true);
+        })
+        .catch((error) => {
+          setLoading(false);
+          switch (error.code) {
+            case "auth/user-not-found":
+              Alert.alert("¡Ops!", "¡Usuario y/o Contraseña incorrectos!");
+              break;
+            case "auth/wrong-password":
+              Alert.alert("¡Ops!", "¡Usuario y/o Contraseña incorrectos!");
+              break;
+          }
+        });
+    } catch (error) {
       setLoading(false);
-      setShowModal(true);
+      alert(error);
     }
   };
   const btnLogin = (bgColor, color, txtName, action) => {
@@ -165,7 +92,7 @@ const Login = (props) => {
   };
   const btnInvited = (number, txtName) => {
     const onpressInvited = (numero) => {
-      onPressLogIn({
+      login({
         email: `invitado${numero}@gmail.com`,
         password: "invitado1234",
       });
@@ -216,8 +143,7 @@ const Login = (props) => {
         initialValues={{ email: email, password: "" }}
         validationSchema={LoginValidation}
         onSubmit={(values, actions) => {
-          onPressLogIn(values);
-          actions.resetForm();
+          login(values, actions);
         }}
       >
         {(formikprops) => (

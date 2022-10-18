@@ -22,7 +22,19 @@ import * as yup from "yup";
 import { useLogin } from "../context/LoginProvider";
 import ModalCategorias from "./modalCategorias";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import firebase from "../dataBase/firebase";
+import { db, app } from "../firebase-config";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+  setDoc,
+  doc,
+  addDoc,
+  onSnapshot,
+} from "firebase/firestore";
+//import firebase from "../dataBase/firebase";
 
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
@@ -46,7 +58,7 @@ const ModalAddGastos = (props) => {
     console.log(ingresos);
   }, [ingresos]);
 
-  const { showModal, setShowModal } = props;
+  const { showModal, setShowModal, traerData, setLoading } = props;
 
   const ingresosValidation = yup.object({
     monto: yup
@@ -102,7 +114,8 @@ const ModalAddGastos = (props) => {
       </TouchableOpacity>
     );
   };
-  const crearGastoFB = (values, categoria) => {
+  const crearGastoFB = async (values, categoria) => {
+    setLoading(true);
     let fecha = new Date();
     let hoy = fecha.toLocaleDateString();
     let mesact = fecha.getMonth();
@@ -115,7 +128,10 @@ const ModalAddGastos = (props) => {
       fecha: fecha,
       idUser: profile.id,
     };
-    firebase.db.collection(nameCollection).add(bodyGasto);
+    await addDoc(collection(db, nameCollection), bodyGasto);
+    setLoading(false);
+    traerData();
+    //firebase.db.collection(nameCollection).add(bodyGasto);
   };
   const formLogin = () => {
     return (

@@ -55,7 +55,7 @@ const MainStack = () => {
       <Stack.Screen
         component={GastosvsAhorros}
         options={{
-          title: "Ahorros vs Gastos",
+          title: "",
           headerBackTitle: "Volver",
         }}
         name="Ahorrosvs"

@@ -5,6 +5,8 @@ import {
   StatusBar,
   Image,
   Dimensions,
+  Animated,
+  Easing,
 } from "react-native";
 import React, { Component, useEffect, useRef } from "react";
 import { useLogin } from "../context/LoginProvider";
@@ -19,50 +21,65 @@ export default Splash = (props) => {
   useEffect(() => {
     setTimeout(() => {
       navigation.navigate("Login");
-    }, 5000);
+    }, 3000);
+    animate();
   }, []);
+
+  //ejemplo 2
+  let animatedValue = new Animated.Value(0);
+  const animate = () => {
+    scaleValue.setValue(0);
+    Animated.timing(scaleValue, {
+      toValue: 1,
+      duration: 3000,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(() => {});
+  };
+
+  let scaleValue = new Animated.Value(0);
+
+  const cardScale = scaleValue.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [0, 0.5, 1],
+  });
+  /* ********* */
   return (
     <View
       style={{
-        //backgroundColor: "#4F56FF",
         flex: 1,
         justifyContent: "center",
         alignContent: "center",
+        alignItems: "center",
+        backgroundColor: "#4C44CF",
       }}
     >
-      <LinearGradient
-        // Background Linear Gradient
-        colors={["#DFDFDE", "#DFDFDE", "#DFDFDE"]}
+      <Animated.View
         style={{
-          flex: 1,
-          justifyContent: "center",
-          alignContent: "center",
-          alignItems: "center",
+          width: "80%",
+          height: Dimensions.get("window").height * 0.4,
+          transform: [{ scale: cardScale }],
         }}
       >
-        <View
+        <Text
           style={{
+            color: "white",
+            fontSize: 35,
+            textAlign: "center",
             width: "100%",
-            justifyContent: "center",
-            alignContent: "center",
-            alignItems: "center",
-            marginTop: 30,
-            borderWidth: 0,
           }}
         >
-          <Text style={{ color: "black", fontSize: 40, textAlign: "center" }}>
-            Herik Arismendy Division 4a
-          </Text>
-        </View>
+          Herik Arismendy Division 4a
+        </Text>
         <Image
-          source={require("../assets/splash/chat.gif")}
-          resizeMode={"center"}
+          source={require("../assets/logos/iconlogo.png")}
           style={{
-            width: Dimensions.get("window").width * 0.8,
-            //height: Dimensions.get("window").height * 1.2,
+            width: "100%",
+            height: "100%",
+            resizeMode: "contain",
           }}
         />
-      </LinearGradient>
+      </Animated.View>
     </View>
   );
 };

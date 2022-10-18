@@ -39,11 +39,9 @@ const ListGastos = (props) => {
       <View
         style={{
           flex: 1,
-          borderBottomWidth: 0.5,
           border: "black",
           paddingBottom: 5,
           paddingTop: 5,
-          borderWidth: 0,
           width: "100%",
           height: Dimensions.get("window").height * 0.2,
         }}
@@ -59,16 +57,36 @@ const ListGastos = (props) => {
             flexDirection: "row",
           }}
         >
-          <Text style={{ fontWeight: "bold" }}>
-            {" "}
-            Categoria: {categoria.name}{" "}
-          </Text>
-          <AntDesign
-            name={categoria.iconName}
-            size={20}
-            color={categoria.coloIcon}
-            style={{ marginHorizontal: 10 }}
-          />
+          <View
+            style={{
+              flex: 0.33,
+              alignItems: "center",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            <Text style={{ fontWeight: "bold", fontSize: 20 }}>Categoria:</Text>
+          </View>
+          <View
+            style={{
+              flex: 0.66,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            <Text style={{ fontWeight: "bold", fontSize: 15, color: "gray" }}>
+              {" "}
+              {categoria.name}{" "}
+            </Text>
+            <AntDesign
+              name={categoria.iconName}
+              size={20}
+              color={categoria.coloIcon}
+              style={{ marginHorizontal: 10 }}
+            />
+          </View>
         </View>
         <View
           style={{
@@ -82,13 +100,35 @@ const ListGastos = (props) => {
             flexDirection: "row",
           }}
         >
-          <Text style={{ fontWeight: "bold" }}> Monto: ${monto} </Text>
-          <FontAwesome
-            name={"money"}
-            size={20}
-            color={"green"}
-            style={{ marginHorizontal: 10 }}
-          />
+          <View
+            style={{
+              flex: 0.33,
+              alignItems: "center",
+              justifyContent: "flex-start",
+              alignContent: "center",
+            }}
+          >
+            <Text style={{ fontWeight: "bold", fontSize: 20 }}>Monto: </Text>
+          </View>
+          <View
+            style={{
+              flex: 0.66,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            <Text style={{ fontWeight: "bold", fontSize: 15, color: "gray" }}>
+              ${monto}
+            </Text>
+            <FontAwesome
+              name={"money"}
+              size={20}
+              color={"green"}
+              style={{ marginHorizontal: 10 }}
+            />
+          </View>
         </View>
         <View
           style={{
@@ -102,13 +142,41 @@ const ListGastos = (props) => {
             flexDirection: "row",
           }}
         >
-          <Text style={{ fontWeight: "bold" }}> Nota: {nota} </Text>
-          <FontAwesome
-            name={"sticky-note-o"}
-            size={20}
-            color={"gray"}
-            style={{ marginHorizontal: 10 }}
-          />
+          <View
+            style={{
+              flex: 0.33,
+              alignItems: "center",
+              justifyContent: "flex-start",
+              alignContent: "center",
+            }}
+          >
+            <Text style={{ fontWeight: "bold", fontSize: 20 }}>Nota: </Text>
+          </View>
+          <View
+            style={{
+              flex: 0.66,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 15,
+                color: "gray",
+              }}
+            >
+              {nota}
+            </Text>
+            <FontAwesome
+              name={"sticky-note-o"}
+              size={20}
+              color={"gray"}
+              style={{ marginHorizontal: 10 }}
+            />
+          </View>
         </View>
         <View
           style={{
@@ -122,13 +190,41 @@ const ListGastos = (props) => {
             flexDirection: "row",
           }}
         >
-          <Text style={{ fontWeight: "bold" }}> Fecha: {fechaCorta} </Text>
-          <Fontisto
-            name={"date"}
-            size={20}
-            color={"red"}
-            style={{ marginHorizontal: 10 }}
-          />
+          <View
+            style={{
+              flex: 0.33,
+              alignItems: "center",
+              justifyContent: "flex-start",
+              alignContent: "center",
+            }}
+          >
+            <Text style={{ fontWeight: "bold", fontSize: 20 }}>Fecha: </Text>
+          </View>
+          <View
+            style={{
+              flex: 0.66,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 15,
+                color: "gray",
+              }}
+            >
+              {fechaCorta}
+            </Text>
+            <Fontisto
+              name={"date"}
+              size={20}
+              color={"red"}
+              style={{ marginHorizontal: 10 }}
+            />
+          </View>
         </View>
       </View>
     );
@@ -140,7 +236,7 @@ const ListGastos = (props) => {
         data={gastos}
         renderItem={(gasto) => <ItemList info={gasto} />}
         keyExtractor={(item, index) => index.toString()}
-        style={{ borderWidth: 1 }}
+        style={{ borderWidth: 0 }}
         ListEmptyComponent={() => {
           return (
             <View

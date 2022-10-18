@@ -12,7 +12,7 @@ import {
   Alert,
 } from "react-native";
 import { useLogin } from "../context/LoginProvider";
-import firebase from "../dataBase/firebase";
+//import firebase from "../dataBase/firebase";
 import {
   LineChart,
   BarChart,
@@ -25,7 +25,17 @@ import { useFocusEffect } from "@react-navigation/core";
 import LoadingScreen from "../utils/loadingScreen";
 import ColorsPPS from "../utils/ColorsPPS";
 import { Entypo, FontAwesome } from "@expo/vector-icons";
-
+import { authentication, db } from "../firebase-config";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+  getDoc,
+  doc,
+  onSnapshot,
+} from "firebase/firestore";
 const colores = [
   "red",
   "blue",
@@ -89,226 +99,215 @@ const GastosvsAhorros = () => {
   useFocusEffect(
     useCallback(() => {
       setLoading(true);
-      const TraerDataOrdenada = async () => {
-        firebase.db
-          .collection(nameCollectionUmbral)
-          .onSnapshot((querySnapshot) => {
-            const newUmbral = [];
-            querySnapshot.docs.forEach((doc) => {
-              const { monto, umbral, mes } = doc.data(); // destructuro el doc
-              let bodyUmbral = {
-                monto: monto,
-                umbral: umbral,
-                mes: mes,
-              };
-              if (mes == 0) {
-                setumbralEnero(doc.data().monto);
-              }
-              if (mes == 1) {
-                setumbralFebrero(doc.data().monto);
-              }
-              if (mes == 2) {
-                setumbralMarzo(doc.data().monto);
-              }
-              if (mes == 3) {
-                setumbralAbril(doc.data().monto);
-              }
-              if (mes == 4) {
-                setumbralMayo(doc.data().monto);
-              }
-              if (mes == 5) {
-                setumbralJunio(doc.data().monto);
-              }
-              if (mes == 6) {
-                setumbralJulio(doc.data().monto);
-              }
-              if (mes == 7) {
-                setumbralAgosto(doc.data().monto);
-              }
-              if (mes == 8) {
-                setumbralSeptiembre(doc.data().monto);
-              }
-              if (mes == 9) {
-                setumbralOctubre(doc.data().monto);
-              }
-              if (mes == 10) {
-                setumbralNoviembre(doc.data().monto);
-              }
-              if (mes == 11) {
-                setumbralDiciembre(doc.data().monto);
-              }
-            });
-          });
 
-        setTimeout(() => {
-          firebase.db
-            .collection(nameCollection)
-            .orderBy("fecha", "desc")
-            .onSnapshot((querySnapshot) => {
-              const newGastosEnero = [];
-              const newGastosFebrero = [];
-              const newGastosMarzo = [];
-              const newGastosAbril = [];
-              const newGastosMayo = [];
-              const newGastosJunio = [];
-              const newGastosJulio = [];
-              const newGastosAgosto = [];
-              const newGastosSeptiembre = [];
-              const newGastosOctubre = [];
-              const newGastosNoviembre = [];
-              const newGastosDiciembre = [];
-
-              querySnapshot.docs.forEach((doc) => {
-                const {
-                  idUser,
-                  fecha,
-                  fechaCorta,
-                  categoria,
-                  monto,
-                  nota,
-                  mes,
-                } = doc.data(); // destructuro el doc
-
-                let BodyGasto = {
-                  name: nota,
-                  nota: nota,
-                  idUser: idUser,
-                  monto: monto,
-                  id: doc.id,
-                  categoria: categoria,
-                  fechaCorta: fechaCorta,
-                  fecha: fecha, // id del DOCUMENTO
-                  mes: mes,
-                };
-                if (mes == 0) {
-                  newGastosEnero.push(BodyGasto);
-                }
-                if (mes == 1) {
-                  newGastosFebrero.push(BodyGasto);
-                }
-                if (mes == 2) {
-                  newGastosMarzo.push(BodyGasto);
-                }
-                if (mes == 3) {
-                  newGastosAbril.push(BodyGasto);
-                }
-                if (mes == 4) {
-                  newGastosMayo.push(BodyGasto);
-                }
-                if (mes == 5) {
-                  newGastosJunio.push(BodyGasto);
-                }
-                if (mes == 6) {
-                  newGastosJulio.push(BodyGasto);
-                }
-                if (mes == 7) {
-                  newGastosAgosto.push(BodyGasto);
-                }
-                if (mes == 8) {
-                  newGastosSeptiembre.push(BodyGasto);
-                }
-                if (mes == 9) {
-                  newGastosOctubre.push(BodyGasto);
-                }
-                if (mes == 10) {
-                  newGastosNoviembre.push(BodyGasto);
-                }
-                if (mes == 11) {
-                  newGastosDiciembre.push(BodyGasto);
-                }
-              });
-              getTotalMes(
-                newGastosEnero,
-                setTotalEnero,
-                0,
-                setahorroEnero,
-                umbralEnero
-              );
-              getTotalMes(
-                newGastosFebrero,
-                setTotalFebrero,
-                1,
-                setahorroFebrero,
-                umbralFebrero
-              );
-              getTotalMes(
-                newGastosMarzo,
-                setTotalMarzo,
-                2,
-                setahorroMarzo,
-                umbralMarzo
-              );
-              getTotalMes(
-                newGastosAbril,
-                setTotalAbril,
-                3,
-                setahorroAbril,
-                umbralAbril
-              );
-              getTotalMes(
-                newGastosMayo,
-                setTotalMayo,
-                4,
-                setahorroMayo,
-                umbralMayo
-              );
-              getTotalMes(
-                newGastosJunio,
-                setTotalJunio,
-                5,
-                setahorroJunio,
-                umbralJunio
-              );
-              getTotalMes(
-                newGastosJulio,
-                setTotalJulio,
-                6,
-                setahorroJulio,
-                umbralJulio
-              );
-              getTotalMes(
-                newGastosAgosto,
-                setTotalAgosto,
-                7,
-                setahorroAgosto,
-                umbralAgosto
-              );
-              getTotalMes(
-                newGastosSeptiembre,
-                setTotalSeptiembre,
-                8,
-                setahorroSeptiembre,
-                umbralSeptiembre
-              );
-              getTotalMes(
-                newGastosOctubre,
-                setTotalOctubre,
-                9,
-                setahorroOctubre,
-                umbralOctubre
-              );
-              getTotalMes(
-                newGastosNoviembre,
-                setTotalNoviembre,
-                10,
-                setahorroNoviembre,
-                umbralNoviembre
-              );
-              getTotalMes(
-                newGastosDiciembre,
-                setTotalDiciembre,
-                11,
-                setahorroDiciembre,
-                umbralDiciembre
-              );
-              setLoading(false);
-            });
-        }, 4000);
-      };
-
-      TraerDataOrdenada();
+      traerData();
     }, [])
   );
+
+  const traerData = async () => {
+    setLoading(true);
+    const umbralRef = collection(db, nameCollectionUmbral);
+    const q = query(umbralRef, orderBy("fecha", "desc"));
+    /* pRUEBA  */
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const { monto, umbral, mes } = doc.data();
+        if (mes == 0) {
+          setumbralEnero(doc.data().monto);
+        }
+        if (mes == 1) {
+          setumbralFebrero(doc.data().monto);
+        }
+        if (mes == 2) {
+          setumbralMarzo(doc.data().monto);
+        }
+        if (mes == 3) {
+          setumbralAbril(doc.data().monto);
+        }
+        if (mes == 4) {
+          setumbralMayo(doc.data().monto);
+        }
+        if (mes == 5) {
+          setumbralJunio(doc.data().monto);
+        }
+        if (mes == 6) {
+          setumbralJulio(doc.data().monto);
+        }
+        if (mes == 7) {
+          setumbralAgosto(doc.data().monto);
+        }
+        if (mes == 8) {
+          setumbralSeptiembre(doc.data().monto);
+        }
+        if (mes == 9) {
+          setumbralOctubre(doc.data().monto);
+        }
+        if (mes == 10) {
+          setumbralNoviembre(doc.data().monto);
+        }
+        if (mes == 11) {
+          setumbralDiciembre(doc.data().monto);
+        }
+      });
+
+      setTimeout(() => {
+        const gastosRef = collection(db, nameCollection);
+        const qGastos = query(gastosRef);
+
+        const subscribeCollection = onSnapshot(qGastos, (querySnapshot) => {
+          const newGastosEnero = [];
+          const newGastosFebrero = [];
+          const newGastosMarzo = [];
+          const newGastosAbril = [];
+          const newGastosMayo = [];
+          const newGastosJunio = [];
+          const newGastosJulio = [];
+          const newGastosAgosto = [];
+          const newGastosSeptiembre = [];
+          const newGastosOctubre = [];
+          const newGastosNoviembre = [];
+          const newGastosDiciembre = [];
+          querySnapshot.docs.forEach((doc) => {
+            const { idUser, fecha, fechaCorta, categoria, monto, nota, mes } =
+              doc.data();
+            let BodyGasto = {
+              name: nota,
+              nota: nota,
+              idUser: idUser,
+              monto: monto,
+              id: doc.id,
+              categoria: categoria,
+              fechaCorta: fechaCorta,
+              fecha: fecha, // id del DOCUMENTO
+              mes: mes,
+            };
+            if (mes == 0) {
+              newGastosEnero.push(BodyGasto);
+            }
+            if (mes == 1) {
+              newGastosFebrero.push(BodyGasto);
+            }
+            if (mes == 2) {
+              newGastosMarzo.push(BodyGasto);
+            }
+            if (mes == 3) {
+              newGastosAbril.push(BodyGasto);
+            }
+            if (mes == 4) {
+              newGastosMayo.push(BodyGasto);
+            }
+            if (mes == 5) {
+              newGastosJunio.push(BodyGasto);
+            }
+            if (mes == 6) {
+              newGastosJulio.push(BodyGasto);
+            }
+            if (mes == 7) {
+              newGastosAgosto.push(BodyGasto);
+            }
+            if (mes == 8) {
+              newGastosSeptiembre.push(BodyGasto);
+            }
+            if (mes == 9) {
+              newGastosOctubre.push(BodyGasto);
+            }
+            if (mes == 10) {
+              newGastosNoviembre.push(BodyGasto);
+            }
+            if (mes == 11) {
+              newGastosDiciembre.push(BodyGasto);
+            }
+          });
+          getTotalMes(
+            newGastosEnero,
+            setTotalEnero,
+            0,
+            setahorroEnero,
+            umbralEnero
+          );
+          getTotalMes(
+            newGastosFebrero,
+            setTotalFebrero,
+            1,
+            setahorroFebrero,
+            umbralFebrero
+          );
+          getTotalMes(
+            newGastosMarzo,
+            setTotalMarzo,
+            2,
+            setahorroMarzo,
+            umbralMarzo
+          );
+          getTotalMes(
+            newGastosAbril,
+            setTotalAbril,
+            3,
+            setahorroAbril,
+            umbralAbril
+          );
+          getTotalMes(
+            newGastosMayo,
+            setTotalMayo,
+            4,
+            setahorroMayo,
+            umbralMayo
+          );
+          getTotalMes(
+            newGastosJunio,
+            setTotalJunio,
+            5,
+            setahorroJunio,
+            umbralJunio
+          );
+          getTotalMes(
+            newGastosJulio,
+            setTotalJulio,
+            6,
+            setahorroJulio,
+            umbralJulio
+          );
+          getTotalMes(
+            newGastosAgosto,
+            setTotalAgosto,
+            7,
+            setahorroAgosto,
+            umbralAgosto
+          );
+          getTotalMes(
+            newGastosSeptiembre,
+            setTotalSeptiembre,
+            8,
+            setahorroSeptiembre,
+            umbralSeptiembre
+          );
+          getTotalMes(
+            newGastosOctubre,
+            setTotalOctubre,
+            9,
+            setahorroOctubre,
+            umbralOctubre
+          );
+          getTotalMes(
+            newGastosNoviembre,
+            setTotalNoviembre,
+            10,
+            setahorroNoviembre,
+            umbralNoviembre
+          );
+          getTotalMes(
+            newGastosDiciembre,
+            setTotalDiciembre,
+            11,
+            setahorroDiciembre,
+            umbralDiciembre
+          );
+        });
+      }, 2000);
+    });
+
+    setLoading(false);
+  };
 
   const getTotalMes = (array, set, mes, setAhorro, montoMes) => {
     let total = 0;
@@ -455,37 +454,39 @@ const GastosvsAhorros = () => {
         flex: 1,
       }}
     >
-      <ScrollView>
-        <View
-          style={{
-            width: "100%",
-            justifyContent: "center",
-            alignContent: "center",
-            alignItems: "center",
-            margin: 20,
-          }}
-        >
-          <Text
+      <ScrollView style={{ marginTop: 30 }}>
+        {false && (
+          <View
             style={{
-              textAlign: "left",
-              fontSize: 20,
-              fontWeight: "bold",
               width: "100%",
+              justifyContent: "center",
+              alignContent: "center",
+              alignItems: "center",
+              margin: 20,
             }}
           >
-            Monto mes Actual = ${umbralMayo}
-          </Text>
-          <Text
-            style={{
-              textAlign: "left",
-              fontSize: 20,
-              fontWeight: "bold",
-              width: "100%",
-            }}
-          >
-            GastoTotal mes Actual = ${totalMayo}
-          </Text>
-        </View>
+            <Text
+              style={{
+                textAlign: "left",
+                fontSize: 20,
+                fontWeight: "bold",
+                width: "100%",
+              }}
+            >
+              Monto mes Actual = ${umbralMayo}
+            </Text>
+            <Text
+              style={{
+                textAlign: "left",
+                fontSize: 20,
+                fontWeight: "bold",
+                width: "100%",
+              }}
+            >
+              GastoTotal mes Actual = ${totalMayo}
+            </Text>
+          </View>
+        )}
 
         <Text style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}>
           Ahorros último año

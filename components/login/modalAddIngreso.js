@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import {
   FontAwesome5,
+  FontAwesome,
   MaterialIcons,
   MaterialCommunityIcons,
   Fontisto,
@@ -19,8 +20,19 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { useLogin } from "../../context/LoginProvider";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import firebase from "../../dataBase/firebase";
-
+//import firebase from "../../dataBase/firebase";
+import { db, app } from "../../firebase-config";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+  setDoc,
+  doc,
+  addDoc,
+  onSnapshot,
+} from "firebase/firestore";
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
 const nameCollection = "collectionIngresos";
@@ -33,9 +45,7 @@ const ModalAddIngreso = (props) => {
   const [addUmbral, setAddUmbral] = useState(false);
   const [umbral, setUmbral] = useState(0);
 
-  useEffect(() => {
-    console.log(ingresos);
-  }, [ingresos]);
+  useEffect(() => {}, [ingresos]);
   const { showModal, setShowModal } = props;
 
   const ingresosValidation = yup.object({
@@ -56,7 +66,7 @@ const ModalAddIngreso = (props) => {
     setMonto(values.monto);
     setIngresos(values.monto);
   };
-  const onPressAddUmbral = (values) => {
+  const onPressAddUmbral = async (values) => {
     console.log(values);
     setAddUmbral(true);
     setUmbral(values.umbral);
@@ -70,7 +80,8 @@ const ModalAddIngreso = (props) => {
       umbral: parseInt(values.umbral),
       mes: mesact,
     };
-    firebase.db.collection(nameCollection).add(bodyUmbral);
+
+    await addDoc(collection(db, nameCollection), bodyUmbral);
     setTimeout(() => {
       setShowModal(!showModal);
     }, 1000);
@@ -279,9 +290,9 @@ const ModalAddIngreso = (props) => {
                 width: "100%",
               }}
               inputStyle={{ color: ColorsPPS.verde, fontSize: 25 }}
-              leftIcon={
-                <MaterialCommunityIcons
-                  name="label-percent"
+              rightIcon={
+                <FontAwesome
+                  name="percent"
                   size={30}
                   color={ColorsPPS.morado}
                 />
@@ -343,6 +354,7 @@ const ModalAddIngreso = (props) => {
             alignContent: "center",
             alignItems: "center",
             backgroundColor: ColorsPPS.rosa,
+            alignSelf: "center",
           }}
         >
           <View style={{ position: "absolute", top: 100 }}>
@@ -354,7 +366,6 @@ const ModalAddIngreso = (props) => {
                 textAlign: "center",
               }}
             >
-              {" "}
               Agrega un monto para el mes
             </Text>
           </View>
@@ -375,7 +386,7 @@ const ModalAddIngreso = (props) => {
             name="money-symbol"
             color={"black"}
             size={100}
-            style={{ margin: 10 }}
+            style={{ margin: 5, alignSelf: "center" }}
           />
           {monto && (
             <View
@@ -391,8 +402,7 @@ const ModalAddIngreso = (props) => {
               <Text
                 style={{ fontSize: 20, fontWeight: "bold", color: "green" }}
               >
-                {" "}
-                Monto agregado ! ✅{" "}
+                Monto agregado ! ✅
               </Text>
             </View>
           )}
